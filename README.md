@@ -1,36 +1,186 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TrayectorIA - Frontend
 
-## Getting Started
+AI-powered professional networking platform. Connects candidates with companies: AI-generated CV, mock interviews, job catalog with advanced search.
 
-First, run the development server:
+---
+
+## Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS v4 |
+| Components | shadcn/ui |
+| Server state | TanStack Query v5 |
+| Client state | Zustand |
+| Forms | React Hook Form + Zod |
+| HTTP | Axios with interceptors |
+| Animations | Framer Motion |
+| Icons | Lucide React |
+| Dates | date-fns |
+
+---
+
+## Quick start
 
 ```bash
+# 1. Clone
+git clone https://github.com/leandro-mc/trayectoria-web.git
+cd trayectoria-web
+
+# 2. Install dependencies
+npm install
+
+# 3. Set environment variables
+cp .env.example .env.local
+# Edit .env.local with your backend URL
+
+# 4. Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) - you will see the design system preview.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment variables
 
-## Learn More
+```bash
+# .env.local
+NEXT_PUBLIC_API_URL=http://localhost:8080/api
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/                   # Next.js App Router (routes, layouts, pages)
+├── features/              # Business domain modules
+│   ├── auth/              # JWT authentication
+│   ├── candidate/         # Candidate profile
+│   ├── company/           # Company profile
+│   ├── jobs/              # Job catalog
+│   ├── applications/      # Applications
+│   ├── saved-offers/      # Saved offers
+│   ├── skills/            # Skills catalog
+│   └── ai/
+│       ├── curricula/     # AI CV generation
+│       └── interviews/    # AI mock interviews
+├── components/
+│   ├── ui/                # shadcn/ui (do not modify)
+│   └── shared/            # Reusable components
+├── lib/
+│   ├── api/               # Axios client + interceptors
+│   ├── auth/              # Token storage + helpers
+│   └── utils/             # cn, date, format
+├── stores/                # Zustand (auth, ui)
+├── types/                 # Global types and API contracts
+└── config/                # Constants, routes, query keys
+```
 
-## Deploy on Vercel
+Each feature follows the same internal structure:
+```
+features/[feature]/
+├── api/         # HTTP functions (never inside components)
+├── components/  # Feature components
+├── hooks/       # Custom hooks with TanStack Query
+├── schemas/     # Zod validation
+└── types/       # TypeScript types
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Data flow
+
+```
+Component -> Custom Hook -> API function -> Axios client -> Backend
+```
+
+Components never call the API directly. Always through a custom hook.
+
+---
+
+## Scripts
+
+```bash
+npm run dev         # Development server (Turbopack, default in Next.js 16)
+npm run build       # Production build
+npm run start       # Production server
+npm run lint        # ESLint
+npm run type-check  # TypeScript without emitting
+```
+
+---
+
+## Authentication
+
+The system uses **JWT with automatic refresh token**:
+
+- The `accessToken` lives in `sessionStorage` (cleared when the tab is closed)
+- The `refreshToken` persists in `localStorage`
+- The Zustand store (`auth.store.ts`) is the runtime source of truth
+- The Axios interceptor automatically refreshes the token on 401, queuing in-flight requests
+
+Route protection is handled in `src/proxy.ts` (equivalent to Next.js ≤15 middleware):
+- `/dashboard`, `/profile`, `/ai/...` -> `CANDIDATE` only
+- `/company/...` -> `COMPANY` only
+- `/login`, `/register` -> redirects if already authenticated
+
+---
+
+## Commit conventions
+
+```
+feat:     new feature
+fix:      bug fix
+chore:    setup, configuration, dependencies
+docs:     documentation
+refactor: code change without functional change
+style:    formatting, no logic change
+test:     tests
+```
+
+---
+
+## Roadmap
+
+### Phase 1 (current)
+
+- [x] Project setup and design system
+- [ ] Authentication (login, candidate register, company register)
+- [ ] Layouts (candidate sidebar, company sidebar)
+- [ ] Job catalog with filters
+- [ ] Complete candidate profile
+- [ ] Applications
+- [ ] Saved offers
+- [ ] AI-generated CV
+- [ ] AI mock interviews (chat)
+
+### Phase 2 (planned)
+
+- [ ] Voice interviews (WebRTC)
+- [ ] Google OAuth
+- [ ] CV export to PDF
+- [ ] Company-candidate matching
+- [ ] Notification system (WebSocket)
+- [ ] Analytics dashboard for companies
+
+---
+
+## Backend
+
+The frontend consumes a REST API at `http://localhost:8080/api/v1`.  
+<!-- See full contract in [`API_CONTRACT.md`](./API_CONTRACT.md) (team internal). -->
+
+---
+
+## Author
+
+**Leandro Mora Corrales**
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.

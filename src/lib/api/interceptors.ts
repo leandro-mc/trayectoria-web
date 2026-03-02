@@ -72,7 +72,7 @@ apiClient.interceptors.response.use(
       tokenStorage.setRefreshToken(data.refreshToken)
 
       // Update the Zustand store lazily to avoid circular imports at module load
-      void import('@/stores/auth.store.js').then(({ useAuthStore }) => {
+      void import('@/stores/auth.store').then(({ useAuthStore }) => {
         useAuthStore.getState().setTokens({
           accessToken:  data.accessToken,
           refreshToken: data.refreshToken,
@@ -96,7 +96,7 @@ function forceLogout(): void {
   tokenStorage.clear()
 
   // Lazy store reset to avoid circular deps
-  void import('@/stores/auth.store.js').then(({ useAuthStore }) => {
+  void import('@/stores/auth.store').then(({ useAuthStore }) => {
     useAuthStore.getState().logout()
   })
 

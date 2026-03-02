@@ -1,94 +1,114 @@
 @import "tailwindcss";
-@import "@fontsource-variable/inter/index.css";
 
-/*  CSS Custom Properties (design tokens) ── */
+@theme {
+  /*  Brand — Índigo  */
+  --color-brand-50:  #EEF2FF;
+  --color-brand-100: #E0E7FF;
+  --color-brand-200: #C7D2FE;
+  --color-brand-300: #A5B4FC;
+  --color-brand-400: #818CF8;
+  --color-brand-500: #6366F1;
+  --color-brand-600: #4F46E5;
+  --color-brand-700: #4338CA;
+  --color-brand-800: #3730A3;
+  --color-brand-900: #312E81;
 
-:root {
-  /* Brand */
-  --brand-50:  #EEF2FF;
-  --brand-100: #E0E7FF;
-  --brand-200: #C7D2FE;
-  --brand-300: #A5B4FC;
-  --brand-400: #818CF8;
-  --brand-500: #6366F1;
-  --brand-600: #4F46E5;
-  --brand-700: #4338CA;
-  --brand-800: #3730A3;
-  --brand-900: #312E81;
+  /*  AI Accent — Violeta  */
+  --color-ai-400: #C084FC;
+  --color-ai-500: #A855F7;
+  --color-ai-600: #9333EA;
 
-  /* AI Accent */
-  --ai-400: #C084FC;
-  --ai-500: #A855F7;
-  --ai-600: #9333EA;
+  /*  Neutral  */
+  --color-neutral-0:   #FFFFFF;
+  --color-neutral-50:  #FAFAFA;
+  --color-neutral-100: #F4F4F5;
+  --color-neutral-200: #E4E4E7;
+  --color-neutral-300: #D4D4D8;
+  --color-neutral-400: #A1A1AA;
+  --color-neutral-500: #71717A;
+  --color-neutral-600: #52525B;
+  --color-neutral-700: #3F3F46;
+  --color-neutral-800: #27272A;
+  --color-neutral-900: #18181B;
+  --color-neutral-950: #09090B;
 
-  /* Semantic */
-  --color-background:      #FAFAFA;
-  --color-surface:         #FFFFFF;
-  --color-border:          #E4E4E7;
-  --color-text-primary:    #18181B;
-  --color-text-secondary:  #52525B;
-  --color-text-muted:      #A1A1AA;
+  /*  Semantic  */
+  --color-success-50:  #F0FDF4;
+  --color-success-500: #22C55E;
+  --color-success-600: #16A34A;
+
+  --color-warning-50:  #FFFBEB;
+  --color-warning-500: #F59E0B;
+  --color-warning-600: #D97706;
+
+  --color-danger-50:  #FFF1F2;
+  --color-danger-500: #F43F5E;
+  --color-danger-600: #E11D48;
+
+  /*  Typography  */
+  --font-sans: "Inter var", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /*  Shadows  */
+  --shadow-card:       0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-card-hover: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08);
+  --shadow-modal:      0 20px 60px -10px rgb(0 0 0 / 0.15);
+
+  /*  Animations  */
+  --animate-fade-in:    fadeIn 0.2s ease-out;
+  --animate-slide-up:   slideUp 0.3s ease-out;
+  --animate-pulse-slow: pulse 3s infinite;
+  --animate-shimmer:    shimmer 2s infinite;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0);   }
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 1;   }
+    50%       { opacity: 0.4; }
+  }
 }
 
-.dark {
-  --color-background:      #09090B;
-  --color-surface:         #18181B;
-  --color-border:          #27272A;
-  --color-text-primary:    #FAFAFA;
-  --color-text-secondary:  #A1A1AA;
-  --color-text-muted:      #52525B;
-}
+/*  Dark mode via class on <html> 
+   ThemeSync in Providers.tsx toggles .dark based on Zustand store.
+*/
 
-/*  Base resets ─ */
+@variant dark (&:where(.dark, .dark *));
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/*  Font  */
 
-html {
-  scroll-behavior: smooth;
+@import "@fontsource-variable/inter";
+
+/*  Base  */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/*  Scrollbar (webkit)  */
+/*  Scrollbar  */
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-neutral-300); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-neutral-400); }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/*  Focus  */
 
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #A1A1AA;
-}
-
-/*  Focus rings ─ */
-
-:focus-visible {
-  outline: 2px solid var(--brand-500);
-  outline-offset: 2px;
-}
+:focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: 2px; }
 
 /*  Selection  */
 
-::selection {
-  background: var(--brand-200);
-  color: var(--brand-900);
-}
-
-.dark ::selection {
-  background: var(--brand-800);
-  color: var(--brand-100);
-}
+::selection { background: var(--color-brand-200); color: var(--color-brand-900); }

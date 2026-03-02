@@ -1,9 +1,7 @@
-// src/middleware.ts
-
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// ─── Route groups ─────────────────────────────────────────────────────────────
+//  Route groups 
 
 const CANDIDATE_ROUTES = [
   '/dashboard',
@@ -22,7 +20,7 @@ const COMPANY_ROUTES = [
 
 const AUTH_ROUTES = ['/login', '/register']
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// Types
 
 interface PersistedAuth {
   state?: {
@@ -33,6 +31,8 @@ interface PersistedAuth {
     refreshToken?: string
   }
 }
+
+//  Cookie parser 
 
 function parseAuthCookie(request: NextRequest): PersistedAuth | null {
   const cookie = request.cookies.get('trayectoria-auth')
@@ -45,38 +45,42 @@ function parseAuthCookie(request: NextRequest): PersistedAuth | null {
   }
 }
 
-// ─── Middleware ───────────────────────────────────────────────────────────────
+//  Proxy function 
 
-export function middleware(request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl
   const auth = parseAuthCookie(request)
 
   const isAuthenticated = auth?.state?.isAuthenticated === true
   const role            = auth?.state?.user?.role
 
-  // ── Redirect logged-in users away from auth pages ──────────────────────────
+  //  Redirect logged-in users away from auth pages 
   const onAuthRoute = AUTH_ROUTES.some((r) => pathname.startsWith(r))
   if (onAuthRoute && isAuthenticated) {
     const destination = role === 'CANDIDATE' ? '/dashboard' : '/company/dashboard'
     return NextResponse.redirect(new URL(destination, request.url))
   }
 
-  // ── Protect candidate routes ───────────────────────────────────────────────
+  //  Protect candidate routes 
   const onCandidateRoute = CANDIDATE_ROUTES.some((r) => pathname.startsWith(r))
   if (onCandidateRoute) {
     if (!isAuthenticated) {
-      return NextResponse.redirect(new URL(`/login?next=${encodeURIComponent(pathname)}`, request.url))
+      return NextResponse.redirect(
+        new URL(`/login?next=${encodeURIComponent(pathname)}`, request.url),
+      )
     }
     if (role !== 'CANDIDATE') {
       return NextResponse.redirect(new URL('/company/dashboard', request.url))
     }
   }
 
-  // ── Protect company routes ─────────────────────────────────────────────────
+  //  Protect company routes 
   const onCompanyRoute = COMPANY_ROUTES.some((r) => pathname.startsWith(r))
   if (onCompanyRoute) {
     if (!isAuthenticated) {
-      return NextResponse.redirect(new URL(`/login?next=${encodeURIComponent(pathname)}`, request.url))
+      return NextResponse.redirect(
+        new URL(`/login?next=${encodeURIComponent(pathname)}`, request.url),
+      )
     }
     if (role !== 'COMPANY') {
       return NextResponse.redirect(new URL('/dashboard', request.url))
@@ -86,7 +90,7 @@ export function middleware(request: NextRequest): NextResponse {
   return NextResponse.next()
 }
 
-// ─── Matcher — exclude static assets and API routes ──────────────────────────
+//  Matcher 
 
 export const config = {
   matcher: [
