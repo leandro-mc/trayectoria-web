@@ -1,9 +1,7 @@
-// src/stores/ui.store.ts
-
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+//  Types 
 
 type Theme = 'light' | 'dark' | 'system'
 
@@ -31,17 +29,17 @@ interface UIActions {
 
 type UIStore = UIState & UIActions
 
-// ─── Store ────────────────────────────────────────────────────────────────────
+//  Store 
 
 export const useUIStore = create<UIStore>()(
   persist(
     (set) => ({
-      // ── State ──
+      //  State 
       sidebarCollapsed: false,
       theme:            'system',
       notifications:    [],
 
-      // ── Actions ──
+      //  Actions 
       toggleSidebar: () =>
         set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
 
@@ -78,7 +76,7 @@ export const useUIStore = create<UIStore>()(
   ),
 )
 
-// ─── Selectors ────────────────────────────────────────────────────────────────
+//  Selectors 
 
 export const selectSidebarCollapsed = (s: UIStore) => s.sidebarCollapsed
 export const selectTheme            = (s: UIStore) => s.theme
