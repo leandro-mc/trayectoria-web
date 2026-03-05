@@ -167,7 +167,7 @@ export function LoginForm() {
       <p className="text-center text-sm text-neutral-500 dark:text-neutral-400 mt-6">
         ¿No tenés cuenta?{' '}
         <Link
-          href={ROUTES.registerCandidate}
+          href={ROUTES.register}
           className="text-brand-600 dark:text-brand-400 font-medium hover:underline"
         >
           Registrate

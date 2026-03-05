@@ -3,6 +3,7 @@ export const ROUTES = {
   //  Public 
   home:              '/' as const,
   login:             '/login' as const,
+  register:          '/register' as const,          
   registerCandidate: '/register/candidate' as const,
   registerCompany:   '/register/company' as const,
   publicJobs:        '/jobs' as const,
