@@ -3,6 +3,12 @@
 import { useState } from 'react'
 import { Sparkles, Briefcase, Search, BookOpen, Building2, Zap, Shield, Users, Sun, Moon } from 'lucide-react'
 
+import { redirect } from 'next/navigation'
+
+export default function RootPage() {
+  redirect('/jobs')
+}
+
 //  Theme toggle (local, no store dependency for the preview) 
 
 function ThemeToggle() {
@@ -68,7 +74,7 @@ function Card({ children, className = '' }: { children: React.ReactNode; classNa
 
 //  Page 
 
-export default function DesignSystemPreview() {
+export function DesignSystemPreview() {
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-950 transition-colors duration-200">
 
