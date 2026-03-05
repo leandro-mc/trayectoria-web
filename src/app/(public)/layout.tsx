@@ -69,7 +69,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                 Iniciar sesión
               </Link>
               <Link
-                href={ROUTES.registerCandidate}
+                href={ROUTES.register}
                 className="inline-flex h-9 px-4 items-center rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition-colors"
               >
                 Registrarse
