@@ -30,6 +30,28 @@ interface AuthActions {
 
 type AuthStore = AuthState & AuthActions
 
+//  Cookie helper
+// The proxy.ts runs on the server and can only read cookies — not localStorage.
+// We mirror the minimal auth state to a cookie so the proxy can protect routes.
+
+const COOKIE_NAME = 'trayectoria-auth'
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 7 // 7 days
+
+function writeAuthCookie(user: AuthUser, refreshToken: string): void {
+  if (typeof document === 'undefined') return
+  const value = encodeURIComponent(
+    JSON.stringify({
+      state: { isAuthenticated: true, user, refreshToken },
+    }),
+  )
+  document.cookie = `${COOKIE_NAME}=${value}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`
+}
+
+function clearAuthCookie(): void {
+  if (typeof document === 'undefined') return
+  document.cookie = `${COOKIE_NAME}=; path=/; max-age=0`
+}
+
 //  Initial state 
 
 const initialState: AuthState = {
@@ -50,6 +72,8 @@ export const useAuthStore = create<AuthStore>()(
         // Access token lives in sessionStorage (cleared on tab close)
         tokenStorage.setAccessToken(accessToken)
         tokenStorage.setRefreshToken(refreshToken)
+        // Mirror to cookie so proxy.ts can read it server-side
+        writeAuthCookie(user, refreshToken)
 
         set({
           user,
@@ -62,11 +86,15 @@ export const useAuthStore = create<AuthStore>()(
       setTokens: ({ accessToken, refreshToken }) => {
         tokenStorage.setAccessToken(accessToken)
         tokenStorage.setRefreshToken(refreshToken)
+        // Update cookie with new refresh token
+        const currentUser = useAuthStore.getState().user
+        if (currentUser) writeAuthCookie(currentUser, refreshToken)
         set({ accessToken, refreshToken })
       },
 
       logout: () => {
         tokenStorage.clear()
+        clearAuthCookie()
         set(initialState)
       },
     }),

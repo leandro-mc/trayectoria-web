@@ -3,8 +3,9 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Sparkles } from 'lucide-react'
+import { Sparkles, LayoutDashboard } from 'lucide-react'
 import { ThemeToggle } from '@/components/shared/layout/ThemeToggle'
+import { useAuthStore } from '@/stores/auth.store'
 import { ROUTES } from '@/config/routes'
 import { cn } from '@/lib/utils/cn'
 
@@ -18,7 +19,12 @@ const AUTH_PATHS = ['/login', '/register']
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
   const pathname   = usePathname()
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const role            = useAuthStore((s) => s.user?.role)
   const isAuthPage = AUTH_PATHS.some((p) => pathname.startsWith(p))
+
+  const dashboardHref =
+  role === 'COMPANY' ? ROUTES.companyDashboard : ROUTES.dashboard
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col">
@@ -62,18 +68,32 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
           {!isAuthPage && (
             <>
-              <Link
-                href={ROUTES.login}
-                className="hidden sm:inline-flex h-9 px-4 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-sm font-medium transition-colors"
-              >
-                Iniciar sesión
-              </Link>
-              <Link
-                href={ROUTES.register}
-                className="inline-flex h-9 px-4 items-center rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition-colors"
-              >
-                Registrarse
-              </Link>
+            {isAuthenticated ? (
+                // Authenticated — show go to dashboard button
+                <Link
+                  href={dashboardHref}
+                  className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition-colors"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Mi panel
+                </Link>
+              ) : (
+                // Not authenticated — show login + register
+                <>
+                  <Link
+                    href={ROUTES.login}
+                    className="hidden sm:inline-flex h-9 px-4 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-sm font-medium transition-colors"
+                  >
+                    Iniciar sesión
+                  </Link>
+                  <Link
+                    href={ROUTES.register}
+                    className="inline-flex h-9 px-4 items-center rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition-colors"
+                  >
+                    Registrarse
+                  </Link>
+                </>
+              )}
             </>
           )}
         </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { authApi } from '../api/auth.api'
 import { useAuthStore } from '@/stores/auth.store'
 import { persistAuthResponse } from '@/lib/auth/auth.helpers'
@@ -19,6 +19,7 @@ import type {
 function useHandleAuthSuccess() {
   const setAuth   = useAuthStore((s) => s.setAuth)
   const router    = useRouter()
+  const searchParams = useSearchParams()
 
   return (data: AuthResponse) => {
     persistAuthResponse(data)
@@ -26,11 +27,13 @@ function useHandleAuthSuccess() {
       { email: data.email, role: data.role },
       { accessToken: data.accessToken, refreshToken: data.refreshToken },
     )
-
-    const destination =
+    // Redirect - respect ?next= param if present, otherwise use role default
+    const next = searchParams.get('next')
+    const defaultDestination =
       data.role === 'CANDIDATE' ? ROUTES.dashboard : ROUTES.companyDashboard
 
-    router.push(destination)
+    // Use replace so the login page is not in browser history
+    router.replace(next ?? defaultDestination)
   }
 }
 
