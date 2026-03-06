@@ -38,7 +38,7 @@ export function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-36">
+      <DropdownMenuContent align="end" className="w-36 bg-white dark:bg-neutral-900">
         {THEME_OPTIONS.map(({ value, label, icon: Icon }) => (
           <DropdownMenuItem
             key={value}
