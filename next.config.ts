@@ -1,6 +1,12 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  // Allow requests from local network devices (phones, tablets, etc.)
+  allowedDevOrigins: [
+    "http://192.168.100.33:3000",
+    "192.168.100.33",
+  ],
+
   // Allow images from Cloudinary (for avatars and logos)
   images: {
     remotePatterns: [
