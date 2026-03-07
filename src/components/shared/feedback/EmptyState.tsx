@@ -1,6 +1,7 @@
 'use client'
 
-import { Link, type LucideIcon } from 'lucide-react'
+import NextLink from 'next/link'
+import { type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils/cn'
 
@@ -45,12 +46,12 @@ export function EmptyState({
       {action && (
         action.href
           ? (
-            <Link
+            <NextLink 
               href={action.href}
               className="px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition-colors"
             >
               {action.label}
-            </Link>
+            </NextLink>
           ) : (
             <button
               onClick={action.onClick}
