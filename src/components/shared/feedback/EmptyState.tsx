@@ -1,6 +1,6 @@
 'use client'
 
-import type { LucideIcon } from 'lucide-react'
+import { Link, type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils/cn'
 
@@ -10,7 +10,8 @@ interface EmptyStateProps {
   description: string
   action?:     {
     label:   string
-    onClick: () => void
+    href?:   string
+    onClick?: () => void
   }
   className?: string
 }
@@ -42,12 +43,22 @@ export function EmptyState({
       </p>
 
       {action && (
-        <Button
-          onClick={action.onClick}
-          className="bg-brand-500 hover:bg-brand-600 text-white"
-        >
-          {action.label}
-        </Button>
+        action.href
+          ? (
+            <Link
+              href={action.href}
+              className="px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition-colors"
+            >
+              {action.label}
+            </Link>
+          ) : (
+            <button
+              onClick={action.onClick}
+              className="px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition-colors"
+            >
+              {action.label}
+            </button>
+          )
       )}
     </div>
   )
