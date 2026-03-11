@@ -27,7 +27,7 @@ export function formatDate(
 /**
  * Returns a relative time string like "hace 3 días".
  */
-export function formatRelative(dateStr: string | null | undefined): string {
+export function formatRelativeDate(dateStr: string | null | undefined): string {
   if (!dateStr) return '-'
   const date = parseISO(dateStr)
   if (!isValid(date)) return '-'
