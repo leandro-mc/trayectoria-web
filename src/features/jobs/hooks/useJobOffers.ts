@@ -1,26 +1,28 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { jobsApi } from '../api/jobs.api'
 import { QUERY_KEYS } from '@/config/query-keys'
-import type { ListJobOffersParams } from '../types/jobs.types'
-import type { CreateJobOfferRequest } from '../types/jobs.types'
+import type { ListJobOffersParams, CreateJobOfferRequest } from '../types/jobs.types'
 
 //  Public list 
 
 export function useJobOffers(params: ListJobOffersParams = {}) {
   return useQuery({
     queryKey: QUERY_KEYS.jobs.list(params as Record<string, unknown>),
-    queryFn:  () => jobsApi.list({ size: 10, ...params }),
+    queryFn:  () => jobsApi.list({ size: 12, ...params }),
     staleTime: 1000 * 60 * 2, // 2 minutes
+    // Keep previous page data visible while fetching next page
+    placeholderData: (prev) => prev,
   })
 }
 
 //  Single offer (public) 
 
-export function useJobOffer(id: number) {
+export function useJobOffer(id: number | null) {
   return useQuery({
-    queryKey: QUERY_KEYS.jobs.detail(id),
-    queryFn:  () => jobsApi.getById(id),
-    enabled:  !!id,
+    queryKey: QUERY_KEYS.jobs.detail(id ?? 0),
+    queryFn:  () => jobsApi.getById(id!),
+    enabled:  id !== null,
+    staleTime: 1000 * 60 * 5,
   })
 }
 
@@ -39,6 +41,19 @@ export function useCreateJobOffer() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: CreateJobOfferRequest) => jobsApi.create(data),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.jobs.all })
+    },
+  })
+}
+
+//  Company: update full offer 
+
+export function useUpdateJobOffer() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: CreateJobOfferRequest }) =>
+      jobsApi.update(id, data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.jobs.all })
     },

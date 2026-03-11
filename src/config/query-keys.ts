@@ -35,6 +35,7 @@ export const QUERY_KEYS = {
   //  Saved Offers 
   savedOffers: {
     all: ['saved-offers'] as const,
+    check: (jobOfferId: number) => ['saved-offers', 'check', jobOfferId] as const,
   },
 
   //  Skills Catalog 
