@@ -1,4 +1,3 @@
-// src/features/jobs/components/JobDetailPanel.tsx
 'use client'
 
 import { useState } from 'react'
