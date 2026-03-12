@@ -16,3 +16,5 @@ export type SkillType = 'TECHNICAL' | 'SOFT' | 'TOOL' | 'LANGUAGE'
 
 export type InterviewStatus = 'IN_PROGRESS' | 'COMPLETED'
 export type MessageRole = 'USER' | 'ASSISTANT'
+
+export type InterviewRecommendation = 'STRONG_YES' | 'YES' | 'MAYBE' | 'NO'

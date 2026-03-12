@@ -51,7 +51,9 @@ function DetailSkeleton() {
 export function JobDetailPanel() {
   const [activeTab, setActiveTab] = useState<TabKey>('description')
   const { selectedId, setMode, goBackToList } = useJobsParams()
+  const isCompany = useAuthStore((s) => s.user?.role === 'COMPANY')
   const isCandidate = useAuthStore((s) => s.user?.role === 'CANDIDATE')
+
 
   // selectedId is number | null — useJobOffer handles null via enabled: id !== null
   const { data: offer, isLoading, error } = useJobOffer(selectedId)
@@ -158,7 +160,7 @@ export function JobDetailPanel() {
           </div>
         )}
 
-        {isCandidate && (
+        {!isCompany && (
           <>
             {/* Action buttons */}
             <div className="flex flex-wrap gap-2 mb-4">
@@ -170,21 +172,24 @@ export function JobDetailPanel() {
               />
 
               <SaveButton jobOfferId={offer.id} size="md" showLabel />      
-              
-              <button
-                onClick={() => setMode('cv')}
-                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium border border-ai-300 dark:border-ai-800 text-ai-600 dark:text-ai-400 hover:bg-ai-50 dark:hover:bg-ai-900/20 transition-colors"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                CV personalizado
-              </button>
-              <button
-                onClick={() => setMode('interview')}
-                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium border border-ai-300 dark:border-ai-800 text-ai-600 dark:text-ai-400 hover:bg-ai-50 dark:hover:bg-ai-900/20 transition-colors"
-              >
-                <MessageSquare className="w-3.5 h-3.5" />
-                Entrevista IA
-              </button>         
+              {isCandidate && (
+                <>
+                <button
+                  onClick={() => setMode('cv')}
+                  className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium border border-ai-300 dark:border-ai-800 text-ai-600 dark:text-ai-400 hover:bg-ai-50 dark:hover:bg-ai-900/20 transition-colors"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  CV personalizado
+                </button>
+                <button
+                  onClick={() => setMode('interview')}
+                  className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium border border-ai-300 dark:border-ai-800 text-ai-600 dark:text-ai-400 hover:bg-ai-50 dark:hover:bg-ai-900/20 transition-colors"
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  Entrevista IA
+                </button>  
+              </>
+              )}       
           </div>
           </>
         )}

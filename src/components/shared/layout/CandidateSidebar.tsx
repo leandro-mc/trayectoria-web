@@ -87,14 +87,14 @@ export function CandidateSidebar() {
         ))}
 
         {/* Settings — at bottom of nav */}
-        <div className="pt-2 mt-2 border-t border-neutral-100 dark:border-neutral-800">
+        {/* <div className="pt-2 mt-2 border-t border-neutral-100 dark:border-neutral-800">
           <SidebarLink
             href={ROUTES.settings}
             icon={Settings}
             label="Configuración"
             collapsed={collapsed}
           />
-        </div>
+        </div> */}
       </nav>
 
       {/*  User + actions  */}
