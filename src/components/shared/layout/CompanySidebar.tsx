@@ -11,6 +11,7 @@ import {
   ChevronRight,
   LogOut,
   Sparkles,
+  Search,
 } from 'lucide-react'
 import { useUIStore } from '@/stores/ui.store'
 import { useAuthStore } from '@/stores/auth.store'
@@ -23,6 +24,7 @@ import { cn } from '@/lib/utils/cn'
 
 const NAV_ITEMS = [
   { href: ROUTES.companyDashboard, icon: LayoutDashboard, label: 'Dashboard'       },
+  { href: ROUTES.jobs,             icon: Search,          label: 'Explorar'      },
   { href: ROUTES.companyProfile,   icon: Building2,       label: 'Mi Empresa'      },
   { href: ROUTES.offers,           icon: ListChecks,      label: 'Mis Ofertas', matchPrefix: true },
   { href: ROUTES.newOffer,         icon: PlusCircle,      label: 'Nueva Oferta'    },

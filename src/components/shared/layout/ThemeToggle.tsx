@@ -9,8 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useUIStore } from '@/stores/ui.store'
-
-type Theme = 'light' | 'dark' | 'system'
+import type { Theme } from '@/stores/ui.store'
 
 const THEME_OPTIONS: Array<{ value: Theme; label: string; icon: typeof Sun }> = [
   { value: 'light',  label: 'Claro',   icon: Sun },

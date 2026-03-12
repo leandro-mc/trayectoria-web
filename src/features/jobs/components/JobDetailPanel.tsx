@@ -158,19 +158,19 @@ export function JobDetailPanel() {
           </div>
         )}
 
-        {/* Action buttons */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          <ApplyButton
-            jobOfferId={offer.id}
-            jobTitle={offer.title}
-            companyName={offer.companyName}
-            offerStatus={offer.status}
-          />
+        {isCandidate && (
+          <>
+            {/* Action buttons */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              <ApplyButton
+                jobOfferId={offer.id}
+                jobTitle={offer.title}
+                companyName={offer.companyName}
+                offerStatus={offer.status}
+              />
 
-          <SaveButton jobOfferId={offer.id} size="md" showLabel />
-
-          {isCandidate && (
-            <>
+              <SaveButton jobOfferId={offer.id} size="md" showLabel />      
+              
               <button
                 onClick={() => setMode('cv')}
                 className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium border border-ai-300 dark:border-ai-800 text-ai-600 dark:text-ai-400 hover:bg-ai-50 dark:hover:bg-ai-900/20 transition-colors"
@@ -184,11 +184,10 @@ export function JobDetailPanel() {
               >
                 <MessageSquare className="w-3.5 h-3.5" />
                 Entrevista IA
-              </button>
-            </>
-          )}
-        </div>
-
+              </button>         
+          </div>
+          </>
+        )}
         {/* Content tabs */}
         {availableTabs.length > 1 && (
           <div className="flex -mb-px">

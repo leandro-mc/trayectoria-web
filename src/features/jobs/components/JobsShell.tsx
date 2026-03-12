@@ -5,6 +5,7 @@ import { CandidateSidebar } from '@/components/shared/layout/CandidateSidebar'
 import { MobileBottomNav } from '@/components/shared/layout/MobileBottomNav'
 import { PublicNavbar } from '@/components/shared/layout/PublicNavbar'
 import { useAuthStore } from '@/stores/auth.store'
+import { CompanySidebar } from '@/components/shared/layout/CompanySidebar'
 
 // Jobs is accessible to everyone.
 // - CANDIDATE   -> full candidate shell with sidebar (panel fijo, acciones activas)
@@ -18,16 +19,22 @@ interface JobsShellProps {
 export function JobsShell({ children }: JobsShellProps) {
   const role = useAuthStore((s) => s.user?.role)
   const isCandidate = role === 'CANDIDATE'
+  const isCompany   = role === 'COMPANY'
 
-  if (isCandidate) {
+  if (isCandidate || isCompany) {
     return (
-      <div className="flex h-screen bg-neutral-50 dark:bg-neutral-950 overflow-hidden">
-        <CandidateSidebar />
-        {/* No padding, no max-width — the split panel fills the space */}
-        <div className="flex-1 min-w-0 overflow-hidden flex flex-col">
-          {children}
+      <div className="flex h-dvh bg-neutral-50 dark:bg-neutral-950 overflow-hidden">
+        {isCompany ? <CompanySidebar /> : <CandidateSidebar />}        
+         {/*
+          flex-col so MobileBottomNav sits at the bottom in normal flow.
+          The split panels (JobListPanel, JobDetailPanel) handle their own scroll internally.
+        */}
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+          <div className="flex-1 min-w-0 overflow-hidden">
+            {children}
+          </div>
+          <MobileBottomNav />
         </div>
-        <MobileBottomNav />
       </div>
     )
   }
