@@ -187,7 +187,9 @@ export function MobileBottomNav() {
         <div className="flex items-center h-16">
           {/* Dynamic nav items */}
           {navItems.map(({ href, icon, label }) => {
-            const isActive = pathname === href || (href !== '/jobs' && pathname.startsWith(href + '/'))
+            // /ai/* routes: active when on any AI page (curricula or interviews)
+            const isAI     = href === ROUTES.curricula && pathname.startsWith('/ai')
+            const isActive = isAI || pathname === href || (href !== '/jobs' && pathname.startsWith(href + '/'))
             return (
               <NavItem
                 key={href}

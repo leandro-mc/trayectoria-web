@@ -1,4 +1,4 @@
-import type { WorkMode, JobType, ApplicationStatus, LanguageLevel, SkillType, JobStatus } from '@/types/global.types'
+import type { WorkMode, JobType, ApplicationStatus, LanguageLevel, SkillType, JobStatus, InterviewRecommendation  } from '@/types/global.types'
 
 //  Work Mode 
 
@@ -86,3 +86,20 @@ export const SKILL_TYPE_LABELS: Record<SkillType, string> = {
 //  Pagination 
 
 export const DEFAULT_PAGE_SIZE = 10
+
+
+//  Interview Recommendation 
+
+export const INTERVIEW_RECOMMENDATION_LABELS: Record<InterviewRecommendation, string> = {
+  STRONG_YES: 'Candidato destacado',
+  YES:        'Recomendado',
+  MAYBE:      'A considerar',
+  NO:         'No recomendado',
+}
+
+export const INTERVIEW_RECOMMENDATION_COLORS: Record<InterviewRecommendation, string> = {
+  STRONG_YES: 'bg-success-50 text-success-600 dark:bg-green-900/20 dark:text-green-400',
+  YES:        'bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400',
+  MAYBE:      'bg-warning-50 text-warning-600 dark:bg-yellow-900/20 dark:text-yellow-400',
+  NO:         'bg-danger-50 text-danger-600 dark:bg-red-900/20 dark:text-red-400',
+}

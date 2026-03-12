@@ -7,7 +7,7 @@ export const ROUTES = {
   registerCandidate: '/register/candidate' as const,
   registerCompany:   '/register/company' as const,
   publicJobs:        '/jobs' as const,
-  publicJob:         (id: number) => `/jobs/${id}` as const,
+  publicJob:         (id: number) => `/jobs?id=${id}` as const,
 
   //  Candidate 
   dashboard:    '/dashboard' as const,
@@ -17,7 +17,7 @@ export const ROUTES = {
   saved:        '/saved' as const,
   curricula:    '/ai/curricula' as const,
   interviews:   '/ai/interviews' as const,
-  interview:    (id: number) => `/ai/interviews/${id}` as const,
+  interview:    (id: number) => `/ai/interviews?id=${id}` as const,
   settings:     '/settings' as const,
 
   //  Company 

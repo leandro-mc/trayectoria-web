@@ -4,23 +4,34 @@ import { Search } from 'lucide-react'
 import { JobListPanel } from './JobListPanel'
 import { JobDetailPanel } from './JobDetailPanel'
 import { JobDescriptionSide } from './JobDescriptionSide'
-import { JobAIPlaceholder } from './JobAIPlaceholder'
+import { JobCVPanel } from './JobCVPanel'
+import { JobInterviewPanel } from './JobInterviewPanel'
 import { useJobsParams } from '../hooks/useJobsParams'
 import { cn } from '@/lib/utils/cn'
 
 //  States 
 //
 //  Mobile (<lg):
-//    !selectedId           -> list (full width)
-//    selectedId, !isAIMode -> detail (full width, back -> list)
-//    selectedId, isAIMode  -> description (top) + AI panel (bottom), stacked
+//    !selectedId           → list (full width)
+//    selectedId, !isAIMode → detail (full width, back → list)
+//    selectedId, isAIMode  → description (top) + AI panel (bottom), stacked
 //
 //  Desktop (lg+):
-//    !selectedId           -> list (38%) + empty hint (62%)
-//    selectedId, !isAIMode -> list (38%) + detail (62%)
-//    selectedId, isAIMode  -> description (42%) + AI panel (58%)
+//    !selectedId           → list (38%) + empty hint (62%)
+//    selectedId, !isAIMode → list (38%) + detail (62%)
+//    selectedId, isAIMode  → description (42%) + AI panel (58%)
 //
 // 
+
+
+// Routes to the correct AI panel based on current mode.
+// Kept here (not in a separate file) because it's a 3-line selector — not worth a file.
+function JobAIRouter() {
+  const { mode } = useJobsParams()
+  if (mode === 'cv')        return <JobCVPanel />
+  if (mode === 'interview') return <JobInterviewPanel />
+  return null
+}
 
 export function JobsPageContent() {
   const { selectedId, isAIMode } = useJobsParams()
@@ -72,7 +83,7 @@ export function JobsPageContent() {
               </div>
               {/* AI panel fills the rest */}
               <div className="flex-1 overflow-hidden">
-                <JobAIPlaceholder />
+                <JobAIRouter />
               </div>
             </div>
           )}
@@ -87,7 +98,7 @@ export function JobsPageContent() {
           {/* AI panel (desktop: right side) */}
           {isAIMode && (
             <div className="hidden lg:flex flex-1 flex-col overflow-hidden">
-              <JobAIPlaceholder />
+              <JobAIRouter />
             </div>
           )}
         </>
