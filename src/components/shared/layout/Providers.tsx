@@ -1,9 +1,16 @@
 'use client'
 
+// Import interceptors synchronously so they are registered before ANY request
+// fires — including requests triggered by child effects on first render.
+// There is no circular dependency: Providers does not export anything that
+// interceptors.ts imports; the import is purely a side effect.
+import '@/lib/api/interceptors'
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useEffect, useRef, type ReactNode } from 'react'
 import { useUIStore } from '@/stores/ui.store'
+import { useBootstrapAuth } from '@/features/auth/hooks/useBootstrapAuth'
 
 //  Query Client factory 
 
@@ -45,18 +52,30 @@ function ThemeSync(): null {
   return null
 }
 
-//  Interceptors boot 
-// Ensures Axios interceptors are registered exactly once on the client.
+//  Auth bootstrap gate 
+// Blocks rendering until the silent token refresh (or hydration check) completes.
+// This prevents query components from firing requests with no access token.
+//
+// Visible duration:
+//   - Same session (token in sessionStorage): ~0ms (resolves synchronously after hydration)
+//   - Browser reopened (sessionStorage cleared): one network round-trip (~200–400ms)
+//   - Not authenticated: ~0ms
 
-let interceptorsRegistered = false
+function AuthBootstrapGate({ children }: { children: ReactNode }) {
+  const ready = useBootstrapAuth()
 
-function useBootInterceptors(): void {
-  useEffect(() => {
-    if (!interceptorsRegistered) {
-      interceptorsRegistered = true
-      void import('@/lib/api/interceptors') // side-effect import
-    }
-  }, [])
+  if (!ready) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
+        <div
+          className="w-8 h-8 rounded-full animate-spin border-2"
+          style={{ borderColor: '#6366F1', borderTopColor: 'transparent' }}
+        />
+      </div>
+    )
+  }
+
+  return <>{children}</>
 }
 
 //  Providers 
@@ -69,12 +88,12 @@ export function Providers({ children }: ProvidersProps) {
   const clientRef = useRef<QueryClient | null>(null)
   if (!clientRef.current) clientRef.current = makeQueryClient()
 
-  useBootInterceptors()
-
   return (
     <QueryClientProvider client={clientRef.current}>
       <ThemeSync />
-      {children}
+      <AuthBootstrapGate>
+        {children}
+      </AuthBootstrapGate>
       {process.env.NODE_ENV === 'development' && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}
