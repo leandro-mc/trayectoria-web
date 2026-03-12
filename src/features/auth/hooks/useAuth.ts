@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { authApi } from '../api/auth.api'
 import { useAuthStore } from '@/stores/auth.store'
-import { persistAuthResponse } from '@/lib/auth/auth.helpers'
 import { extractApiError } from '@/lib/utils/format'
 import { ROUTES } from '@/config/routes'
 import type {
@@ -22,7 +21,7 @@ function useHandleAuthSuccess() {
   const searchParams = useSearchParams()
 
   return (data: AuthResponse) => {
-    persistAuthResponse(data)
+    // setAuth writes tokens to sessionStorage + localStorage + cookie + Zustand state
     setAuth(
       { email: data.email, role: data.role },
       { accessToken: data.accessToken, refreshToken: data.refreshToken },

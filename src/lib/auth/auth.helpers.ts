@@ -1,4 +1,3 @@
-import type { AuthResponse } from '@/types/api.types'
 import { tokenStorage } from './token.storage'
 
 /**
@@ -30,12 +29,4 @@ export function isAccessTokenExpired(): boolean {
 
   // exp is in seconds; Date.now() in milliseconds
   return payload['exp'] * 1000 < Date.now()
-}
-
-/**
- * Persists new tokens from an AuthResponse to storage.
- */
-export function persistAuthResponse(auth: AuthResponse): void {
-  tokenStorage.setAccessToken(auth.accessToken)
-  tokenStorage.setRefreshToken(auth.refreshToken)
 }
