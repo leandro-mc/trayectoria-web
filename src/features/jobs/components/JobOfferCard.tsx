@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import { MapPin, Clock, Wifi, Building } from 'lucide-react'
 import { WORK_MODE_LABELS, JOB_TYPE_LABELS } from '@/config/constants'
-import { formatRelative } from '@/lib/utils/date'
+import { formatRelativeDate } from '@/lib/utils/date'
 import type { JobOfferSummaryResponse } from '../types/jobs.types'
 import { cn } from '@/lib/utils/cn'
 
@@ -118,7 +118,7 @@ export function JobOfferCard({
       {/* Footer */}
       <div className="flex items-center justify-between gap-2 mt-auto pt-1">
         <span className="text-xs text-neutral-400 dark:text-neutral-500">
-          {formatRelative(offer.createdAt)}
+          {formatRelativeDate(offer.createdAt)}
         </span>
 
         {actions && (

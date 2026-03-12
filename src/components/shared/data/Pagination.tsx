@@ -33,9 +33,11 @@ export function Pagination({
     const pages: Array<number | 'ellipsis'> = [0]
 
     if (page > 2)             pages.push('ellipsis')
-    if (page > 1)             pages.push(page - 1)
-    if (page !== 0 && page !== totalPages - 1) pages.push(page)
-    if (page < totalPages - 2) pages.push(page + 1)
+
+    const start = Math.max(1, page - 1)
+    const end   = Math.min(totalPages - 2, page + 1)
+    for (let i = start; i <= end; i++) pages.push(i)
+    
     if (page < totalPages - 3) pages.push('ellipsis')
 
     pages.push(totalPages - 1)

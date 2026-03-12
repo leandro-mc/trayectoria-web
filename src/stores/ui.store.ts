@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 
 //  Types 
 
-type Theme = 'light' | 'dark' | 'system'
+export type Theme = 'light' | 'dark' | 'system'
 
 interface Notification {
   id:      string
