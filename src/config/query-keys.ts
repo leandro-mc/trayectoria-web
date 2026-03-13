@@ -16,6 +16,7 @@ export const QUERY_KEYS = {
   //  Company 
   company: {
     profile: ['company', 'profile'] as const,
+    stats:   ['company', 'stats']   as const,
   },
 
   //  Jobs 

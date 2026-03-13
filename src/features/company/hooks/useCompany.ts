@@ -31,3 +31,11 @@ export function useUploadLogo() {
     },
   })
 }
+
+export function useCompanyStats() {
+  return useQuery({
+    queryKey: QUERY_KEYS.company.stats,
+    queryFn:  companyApi.getStats,
+    staleTime: 1000 * 60 * 2,
+  })
+}

@@ -3,6 +3,7 @@ import type {
   CompanyProfileResponse,
   UpdateCompanyProfileRequest,
   LogoResponse,
+  CompanyStatsResponse,
 } from '../types/company.types'
 
 export const companyApi = {
@@ -27,4 +28,9 @@ export const companyApi = {
       })
       .then((r) => r.data)
   },
+
+    getStats: () =>
+    apiClient
+      .get<CompanyStatsResponse>('/companies/me/stats')
+      .then((r) => r.data),
 }
