@@ -48,6 +48,10 @@ export const QUERY_KEYS = {
   curricula: {
     all:    ['curricula'] as const,
     detail: (id: number) => ['curricula', 'detail', id] as const,
+    latest: (candidateId: number, offerId: number) =>
+      ['curricula', 'latest', candidateId, offerId] as const,
+    base: (candidateId: number) =>
+      ['curricula', 'base', candidateId] as const,
   },
 
   //  AI Interviews 

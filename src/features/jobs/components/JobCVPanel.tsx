@@ -5,14 +5,26 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Sparkles, RefreshCw } from 'lucide-react'
-import { useCurricula, useGenerateCurriculum } from '@/features/ai/curricula/hooks/useCurricula'
+import { useCandidateProfile } from '@/features/candidate/hooks/useCandidate'
+import {
+  useLatestCurriculum,
+  useGenerateCurriculum,
+} from '@/features/ai/curricula/hooks/useCurricula'
 import { CurriculumDisplay } from '@/features/ai/curricula/components/CurriculumDisplay'
 import { useJobsParams } from '../hooks/useJobsParams'
-import type { GeneratedCurriculumResponse } from '@/features/ai/curricula/types/curricula.types'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/config/query-keys'
 
-//  Generating skeleton 
+//  Module-level guard 
+// Tracks jobOfferIds for which a generate call is already in flight.
+// A plain component ref would be reset on React StrictMode's second mount;
+// a module-level Set persists for the entire browser session.
+// It is cleared on success/error so the user can regenerate if needed.
+const generationInFlight = new Set<number>()
 
-function GeneratingSkeleton() {
+//  Loading skeleton 
+
+function GeneratingSkeleton({ label }: { label: string }) {
   return (
     <div className="p-5">
       <div className="flex items-center gap-2 mb-5">
@@ -23,7 +35,7 @@ function GeneratingSkeleton() {
           <Sparkles className="w-3 h-3 text-white" />
         </div>
         <span className="text-sm font-medium text-ai-600 dark:text-ai-400 animate-pulse">
-          Generando tu currículum personalizado…
+          {label}
         </span>
       </div>
       <div className="space-y-2.5">
@@ -55,54 +67,92 @@ export function JobCVPanel() {
   const { selectedId } = useJobsParams()
   const jobOfferId     = selectedId!   // Parent ensures selectedId is non-null in AI mode
 
-  const { data: curricula = [], isLoading: loadingList } = useCurricula()
-  const { mutate: generate, isPending: generating }      = useGenerateCurriculum()
+  const queryClient = useQueryClient()
 
-  // Track the curriculum shown in this panel session
-  const [current, setCurrent] = useState<GeneratedCurriculumResponse | null>(null)
+  // Candidate userId is needed for the /curricula/latest endpoint.
+  // Profile is cached after first visit — this rarely makes a network request.
+  const { data: profile, isLoading: profileLoading } = useCandidateProfile()
+  const candidateId = profile?.userId ?? null
 
-  // Prevent double-fire in StrictMode
-  const triggered = useRef(false)
+  const {
+    data:      latestCV,
+    isLoading: loadingLatest,
+    isError:   notFound,        // true when backend returns 404
+  } = useLatestCurriculum(candidateId, jobOfferId)
 
+  const { mutate: generate, isPending: generating } = useGenerateCurriculum()
+
+  // Only set to true when the generate call itself fails (network error, 500, etc.)
+  // — NOT when the CV simply doesn't exist yet. This prevents the error message
+  // from flashing while the auto-generate effect hasn't fired yet.
+  const [generationFailed, setGenerationFailed] = useState(false)
+
+  // Tracks whether we've kicked off a regenerate in the current session
+  const regenRef = useRef(false)
+
+  //  Auto-generate when no CV exists 
   useEffect(() => {
-    if (loadingList) return
-    if (triggered.current) return
+    // Wait until we know whether a CV exists
+    if (profileLoading || loadingLatest) return
+    // A CV already exists — nothing to do
+    if (latestCV) return
+    // Only trigger when the query confirmed "not found"
+    if (!notFound) return
+    // Module-level guard: prevents the second StrictMode mount from firing again
+    if (generationInFlight.has(jobOfferId)) return
 
-    // Check if there's an existing CV for this job
-    const existing = curricula.find((c) => c.jobOfferId === jobOfferId) ?? null
+    generationInFlight.add(jobOfferId)
 
-    if (existing) {
-      setCurrent(existing)
-    } else {
-      // Auto-generate
-      triggered.current = true
-      generate(
-        { jobOfferId },
-        {
-          onSuccess: (cv) => setCurrent(cv),
-          // On error: triggered stays true — don't retry silently
-        },
-      )
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadingList])
-
-  // Reset when job changes
-  useEffect(() => {
-    triggered.current = false
-    setCurrent(null)
-  }, [jobOfferId])
-
-  function handleRegenerate() {
-    triggered.current = true
-    setCurrent(null)
     generate(
       { jobOfferId },
-      { onSuccess: (cv) => setCurrent(cv) },
+      {
+        onSuccess: () => {
+          generationInFlight.delete(jobOfferId)
+        },
+        onError: () => {
+          generationInFlight.delete(jobOfferId)
+          setGenerationFailed(true)
+        },
+      },
+    )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileLoading, loadingLatest, !!latestCV, notFound, jobOfferId])
+
+  //  Reset state when job changes 
+  useEffect(() => {
+    setGenerationFailed(false)
+    regenRef.current = false
+  }, [jobOfferId])
+
+  //  Regenerate handler 
+  function handleRegenerate() {
+    if (generating || regenRef.current) return
+    regenRef.current = true
+    setGenerationFailed(false)
+
+    generate(
+      { jobOfferId },
+      {
+        onSuccess: () => {
+          regenRef.current = false
+          if (candidateId != null) {
+            void queryClient.invalidateQueries({
+              queryKey: QUERY_KEYS.curricula.latest(candidateId, jobOfferId),
+            })
+          }
+        },
+        onError: () => {
+          regenRef.current = false
+          setGenerationFailed(true)
+        },
+      },
     )
   }
 
-  const isLoading = loadingList || (generating && !current)
+  //  Derived state 
+  const showContent  = !!latestCV && !generating
+  const showError    = generationFailed && !generating
+  const showSkeleton = !showContent && !showError
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-neutral-900">
@@ -121,7 +171,7 @@ export function JobCVPanel() {
           </span>
         </div>
 
-        {current && (
+        {showContent && (
           <button
             onClick={handleRegenerate}
             disabled={generating}
@@ -135,32 +185,40 @@ export function JobCVPanel() {
 
       {/* Content */}
       <div className="flex-1 min-h-0 overflow-y-auto">
-        {isLoading
-          ? <GeneratingSkeleton />
-          : current
-            ? (
-              <div className="px-5 py-4">
-                <CurriculumDisplay content={current.content} compact />
-              </div>
-            )
-            : (
-              // Error state — generation failed
-              <div className="flex flex-col items-center justify-center h-full gap-3 p-6 text-center">
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                  No se pudo generar el currículum. Verificá que tu perfil esté completo.
-                </p>
-                <button
-                  onClick={handleRegenerate}
-                  className="inline-flex items-center gap-2 h-9 px-4 rounded-xl text-white text-sm font-medium hover:opacity-90"
-                  style={{ background: 'linear-gradient(135deg,#A855F7,#6366F1)' }}
-                >
-                  <RefreshCw className="w-4 h-4" />
-                  Reintentar
-                </button>
-              </div>
-            )
-        }
+        {showSkeleton && (
+          <GeneratingSkeleton
+            label={
+              generating
+                ? 'Generando tu currículum personalizado…'
+                : 'Buscando currículum existente…'
+            }
+          />
+        )}
+
+        {showContent && (
+          <div className="px-5 py-4">
+            <CurriculumDisplay content={latestCV!.content} compact />
+          </div>
+        )}
+
+        {showError && (
+          <div className="flex flex-col items-center justify-center h-full gap-3 p-6 text-center">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+              No se pudo generar el currículum. Verificá que tu perfil esté completo.
+            </p>
+            <button
+              onClick={handleRegenerate}
+              disabled={generating}
+              className="inline-flex items-center gap-2 h-9 px-4 rounded-xl text-white text-sm font-medium hover:opacity-90 disabled:opacity-50"
+              style={{ background: 'linear-gradient(135deg,#A855F7,#6366F1)' }}
+            >
+              <RefreshCw className="w-4 h-4" />
+              Reintentar
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
 }
+
