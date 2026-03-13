@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState } from 'react'
@@ -5,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   Plus, Users, Pencil, Trash2, MoreHorizontal,
-  Loader2, ChevronDown, ListChecks,
+  Loader2, ChevronDown, ListChecks, Eye,
 } from 'lucide-react'
 import { PageHeader } from '@/components/shared/layout/PageHeader'
 import { EmptyState } from '@/components/shared/feedback/EmptyState'
@@ -158,6 +159,13 @@ function OfferRow({ offer }: { offer: JobOfferSummaryResponse }) {
               >
                 <Users className="w-3.5 h-3.5" />
                 Ver postulantes
+              </button>
+              <button
+                onClick={() => { router.push(ROUTES.editOffer(offer.id)); setMenuOpen(false) }}
+                className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 flex items-center gap-2"
+              >
+                <Eye className="w-3.5 h-3.5" />
+                Ver oferta
               </button>
               <button
                 onClick={() => { router.push(ROUTES.editOffer(offer.id)); setMenuOpen(false) }}

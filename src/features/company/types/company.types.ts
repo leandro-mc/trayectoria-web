@@ -22,3 +22,11 @@ export interface UpdateCompanyProfileRequest {
 export interface LogoResponse {
   logoUrl: string
 }
+
+//  Stats 
+
+export interface CompanyStatsResponse {
+  activeOffers:        number
+  totalApplications:   number
+  pendingApplications: number
+}

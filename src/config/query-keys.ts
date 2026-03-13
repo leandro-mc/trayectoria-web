@@ -16,6 +16,7 @@ export const QUERY_KEYS = {
   //  Company 
   company: {
     profile: ['company', 'profile'] as const,
+    stats:   ['company', 'stats']   as const,
   },
 
   //  Jobs 
@@ -24,6 +25,7 @@ export const QUERY_KEYS = {
     list:   (params: Record<string, unknown>) => ['jobs', 'list', params] as const,
     detail: (id: number) => ['jobs', 'detail', id] as const,
     mine:   ['jobs', 'mine'] as const,
+    interviewInstructions: (id: number) => ['jobs', 'interview-instructions', id] as const,
   },
 
   //  Applications 
@@ -48,6 +50,10 @@ export const QUERY_KEYS = {
   curricula: {
     all:    ['curricula'] as const,
     detail: (id: number) => ['curricula', 'detail', id] as const,
+    latest: (candidateId: number, offerId: number) =>
+      ['curricula', 'latest', candidateId, offerId] as const,
+    base: (candidateId: number) =>
+      ['curricula', 'base', candidateId] as const,
   },
 
   //  AI Interviews 

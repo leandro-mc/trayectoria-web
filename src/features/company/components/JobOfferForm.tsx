@@ -60,11 +60,14 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 interface JobOfferFormProps {
   // Undefined = create mode, defined = edit mode
   initial?: JobOfferResponse
+  // interviewInstructions is not included in JobOfferResponse (private field),
+  // so it must be fetched separately and passed here in edit mode.
+  initialInstructions?: string | null
 }
 
 //  Component 
 
-export function JobOfferForm({ initial }: JobOfferFormProps) {
+export function JobOfferForm({ initial, initialInstructions }: JobOfferFormProps) {
   const router  = useRouter()
   const isEdit  = !!initial
 
@@ -97,27 +100,36 @@ export function JobOfferForm({ initial }: JobOfferFormProps) {
     },
   })
 
+  
+  
   // Populate form in edit mode
   useEffect(() => {
-    if (initial) {
-      reset({
-        title:                 initial.title,
-        description:           initial.description           ?? '',
-        responsibilities:      initial.responsibilities      ?? '',
-        requirements:          initial.requirements          ?? '',
-        benefits:              initial.benefits              ?? '',
-        workMode:              initial.workMode              ?? undefined,
-        jobType:               initial.jobType               ?? undefined,
-        location:              initial.location              ?? '',
-        requiresInterview:     initial.requiresInterview,
-        interviewInstructions: '',
-        expiresAt:             initial.expiresAt
-          ? initial.expiresAt.split('T')[0]   // ISO -> YYYY-MM-DD for date input
-          : '',
-        skillIds:              initial.skills.map((s) => s.id),
-      })
-    }
+    if (!initial) return
+    reset({
+      title:                 initial.title,
+      description:           initial.description           ?? '',
+      responsibilities:      initial.responsibilities      ?? '',
+      requirements:          initial.requirements          ?? '',
+      benefits:              initial.benefits              ?? '',
+      workMode:              initial.workMode              ?? undefined,
+      jobType:               initial.jobType               ?? undefined,
+      location:              initial.location              ?? '',
+      requiresInterview:     initial.requiresInterview,
+      interviewInstructions: '',
+      expiresAt:             initial.expiresAt
+        ? initial.expiresAt.split('T')[0]   // ISO -> YYYY-MM-DD for date input
+        : '',
+      skillIds:              initial.skills.map((s) => s.id),
+    })    
   }, [initial, reset])
+
+  // Populate interviewInstructions once it arrives from the separate endpoint.
+  // Using setValue instead of reset so it doesn't overwrite other fields.
+  useEffect(() => {
+    if (initialInstructions !== undefined) {
+      setValue('interviewInstructions', initialInstructions ?? '')
+    }
+  }, [initialInstructions, setValue])
 
   const skillIds        = watch('skillIds')
   const requiresInterview = watch('requiresInterview')

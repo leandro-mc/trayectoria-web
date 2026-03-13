@@ -65,3 +65,12 @@ export interface ListJobOffersParams {
   page?:     number
   size?:     number
 }
+
+//  Interview instructions (company-only) 
+
+export interface JobOfferInterviewInstructionsResponse {
+  jobOfferId:            number
+  jobOfferTitle:         string
+  interviewInstructions: string | null
+  requiresInterview:     boolean
+}
