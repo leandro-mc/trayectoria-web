@@ -18,9 +18,9 @@ function toJobType(value: string): JobType | undefined {
   return valid.includes(value as JobType) ? (value as JobType) : undefined
 }
 
-// Single hook that owns all URL state for /jobs.
-// Components never touch useSearchParams directly — everything goes through here.
-export function useJobsParams() {
+// Single hook that owns all URL state for /jobs and /saved.
+// basePath defaults to '/jobs' — pass '/saved' from SavedPageContent.
+export function useJobsParams(basePath = '/jobs') {
   const searchParams = useSearchParams()
   const router       = useRouter()
 
@@ -54,8 +54,8 @@ export function useJobsParams() {
       if (value === null || value === '') params.delete(key)
       else params.set(key, value)
     }
-    router.replace(`/jobs?${params.toString()}`, { scroll: false })
-  }, [router, searchParams])
+    router.replace(`${basePath}?${params.toString()}`, { scroll: false })
+  }, [router, searchParams, basePath])
 
   const selectJob = useCallback((id: number) => {
     push({ id: String(id), mode: null })
