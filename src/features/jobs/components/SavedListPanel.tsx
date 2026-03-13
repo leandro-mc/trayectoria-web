@@ -47,7 +47,7 @@ function UnsaveButton({ jobOfferId, onUnsave }: {
 export function SavedListPanel() {
   const { selectedId, page, selectJob, setPage } = useJobsParams('/saved')
   const { data, isLoading }        = useSavedOffers(page)
-  const { mutate: unsave, isPending: unsaving } = useUnsaveOffer()
+  const { mutate: unsave } = useUnsaveOffer()
 
   return (
     <div className="flex flex-col h-full">

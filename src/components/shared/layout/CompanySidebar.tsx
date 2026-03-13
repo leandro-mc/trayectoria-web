@@ -6,7 +6,6 @@ import {
   Building2,
   ListChecks,
   PlusCircle,
-  Settings,
   ChevronLeft,
   ChevronRight,
   LogOut,

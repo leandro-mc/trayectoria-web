@@ -7,7 +7,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import {
   FileText, MessageSquare, CheckCircle2, Clock,
-  Sparkles, ChevronRight,
+  ChevronRight,
 } from 'lucide-react'
 import { useCurricula } from '@/features/ai/curricula/hooks/useCurricula'
 import { useInterviews } from '@/features/ai/interviews/hooks/useInterviews'

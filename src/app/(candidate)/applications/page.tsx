@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import type { Metadata } from 'next'
 import { Briefcase, ExternalLink, Trash2 } from 'lucide-react'
 import { PageHeader } from '@/components/shared/layout/PageHeader'
 import { EmptyState } from '@/components/shared/feedback/EmptyState'

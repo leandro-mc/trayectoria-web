@@ -9,7 +9,6 @@ import {
   Bookmark,
   Sparkles,
   MessageSquare,
-  Settings,
   ChevronLeft,
   ChevronRight,
   LogOut,

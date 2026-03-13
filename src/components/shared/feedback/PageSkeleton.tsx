@@ -1,12 +1,5 @@
 'use client'
 
-import { cn } from '@/lib/utils/cn'
-
-interface SkeletonProps {
-  className?: string
-  style?:     React.CSSProperties  
-}
-
 /** Generic card-shaped skeleton */
 export function CardSkeleton({ lines = 3 }: { lines?: number }) {
   return (
