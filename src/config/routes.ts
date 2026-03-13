@@ -25,6 +25,7 @@ export const ROUTES = {
   companyProfile:    '/company/profile' as const,
   offers:            '/company/offers' as const,
   newOffer:          '/company/offers/new' as const,
+  offerDetail:       (id: number) => `/company/offers/${id}` as const,
   editOffer:         (id: number) => `/company/offers/${id}/edit` as const,
   offerApplications: (id: number) => `/company/offers/${id}/applications` as const,
 } as const

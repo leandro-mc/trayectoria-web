@@ -24,6 +24,7 @@ export const QUERY_KEYS = {
     list:   (params: Record<string, unknown>) => ['jobs', 'list', params] as const,
     detail: (id: number) => ['jobs', 'detail', id] as const,
     mine:   ['jobs', 'mine'] as const,
+    interviewInstructions: (id: number) => ['jobs', 'interview-instructions', id] as const,
   },
 
   //  Applications 
