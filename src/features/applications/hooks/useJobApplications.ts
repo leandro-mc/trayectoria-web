@@ -13,6 +13,16 @@ export function useJobApplications(offerId: number, page = 0) {
   })
 }
 
+// Fetches page size=1 just to get totalElements — cheap and cached per offer.
+export function useOfferApplicationCount(offerId: number) {
+  return useQuery({
+    queryKey: [...QUERY_KEYS.applications.forOffer(offerId), 'count'],
+    queryFn:  () => applicationsApi.getForOffer(offerId, { page: 0, size: 1 }),
+    enabled:  !!offerId,
+    staleTime: 1000 * 60 * 2,
+  })
+}
+
 export function useUpdateApplicationStatus() {
   const queryClient = useQueryClient()
   return useMutation({
