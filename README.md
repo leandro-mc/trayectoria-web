@@ -131,7 +131,7 @@ Route protection is handled in `src/proxy.ts` (equivalent to Next.js ≤15 middl
 
 ---
 
-## Commit conventions
+<!-- ## Commit conventions
 
 ```
 feat:     new feature
@@ -168,7 +168,7 @@ test:     tests
 - [ ] Notification system (WebSocket)
 - [ ] Analytics dashboard for companies
 
----
+--- -->
 
 ## Backend
 
