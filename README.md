@@ -33,8 +33,8 @@ cd trayectoria-web
 npm install
 
 # 3. Set environment variables
-cp .env.example .env.local
-# Edit .env.local with your backend URL
+cp .env.example .env
+# Edit .env with your backend URL
 
 # 4. Start development server
 npm run dev
@@ -47,7 +47,7 @@ Open [http://localhost:3000](http://localhost:3000) - you will see the design sy
 ## Environment variables
 
 ```bash
-# .env.local
+# .env
 NEXT_PUBLIC_API_URL=http://localhost:8080/api
 ```
 
@@ -131,49 +131,9 @@ Route protection is handled in `src/proxy.ts` (equivalent to Next.js ≤15 middl
 
 ---
 
-<!-- ## Commit conventions
-
-```
-feat:     new feature
-fix:      bug fix
-chore:    setup, configuration, dependencies
-docs:     documentation
-refactor: code change without functional change
-style:    formatting, no logic change
-test:     tests
-```
-
----
-
-## Roadmap
-
-### Phase 1 (current)
-
-- [x] Project setup and design system
-- [ ] Authentication (login, candidate register, company register)
-- [ ] Layouts (candidate sidebar, company sidebar)
-- [ ] Job catalog with filters
-- [ ] Complete candidate profile
-- [ ] Applications
-- [ ] Saved offers
-- [ ] AI-generated CV
-- [ ] AI mock interviews (chat)
-
-### Phase 2 (planned)
-
-- [ ] Voice interviews (WebRTC)
-- [ ] Google OAuth
-- [ ] CV export to PDF
-- [ ] Company-candidate matching
-- [ ] Notification system (WebSocket)
-- [ ] Analytics dashboard for companies
-
---- -->
-
 ## Backend
 
 The frontend consumes a REST API at `http://localhost:8080/api/v1`.  
-<!-- See full contract in [`API_CONTRACT.md`](./API_CONTRACT.md) (team internal). -->
 
 ---
 
