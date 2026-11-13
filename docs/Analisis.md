@@ -19,7 +19,7 @@ Organización **por funcionalidad (feature-based)**, la parte más sólida del p
 
 ## Prácticas a revisar
 
-- **Almacenamiento de tokens.** El access token va en `sessionStorage` y el refresh token en `localStorage`, ambos expuestos a XSS. Lo recomendable es cookies `HttpOnly` gestionadas por el backend.
+- **Almacenamiento de tokens.** El access token va en `sessionStorage`; el refresh token se guarda en `localStorage` (persistencia de Zustand) y además se copia, junto con el usuario, a la cookie `trayectoria-auth`, escrita desde JavaScript (sin `HttpOnly` ni `Secure`, con 7 días de vida). Todo queda expuesto ante XSS y la cookie viaja en cada petición. Lo recomendable es cookies `HttpOnly` gestionadas por el backend o por rutas de Next.js.
 - **Protección de rutas con cookie del cliente.** `proxy.ts` decide el acceso leyendo la cookie `trayectoria-auth`, que el propio navegador escribe y por tanto es manipulable. Sirve como mejora de UX, pero la seguridad real debe seguir en el backend (hoy lo está con roles en Spring Security).
 - **Ruta atípica** `(public)/other/jobs`, que parece duplicar `/jobs`. Confirmar si es necesaria.
 - Falta CI (lint + type-check + build en cada push) y accesibilidad por revisar (foco y etiquetas en diálogos y formularios).
